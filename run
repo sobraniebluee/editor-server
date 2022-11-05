@@ -1,0 +1,12 @@
+#!/bin/bash
+
+mysql.server start
+
+sleep .5
+
+/Users/sobraniebluee/Documents/python/api.editor/venv/bin/python /Users/sobraniebluee/Documents/python/api.editor/main.py
+
+echo \
+
+#mysql.server stop
+

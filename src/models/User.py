@@ -4,9 +4,8 @@ from src.db import db, Base, session
 from src.models.mixins import Timestamp
 from src.utils import get_random_char_id
 import jwt
-from src.config import FlaskConfig, Config
+from src.config import TokensConfig, Config
 from sqlalchemy.orm import relationship
-import json
 
 
 class UserTokens(Base):
@@ -20,7 +19,7 @@ class UserTokens(Base):
 
     def create_access_token(self, payload, exp):
         payload["exp"] = datetime.datetime.now(tz=datetime.timezone.utc) + exp
-        self.access_token = jwt.encode(payload, FlaskConfig.SECRET, algorithm="HS256")
+        self.access_token = jwt.encode(payload=payload, key=TokensConfig.SECRET_JWT, algorithm="HS256")
 
     def save(self):
         try:

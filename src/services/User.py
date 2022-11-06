@@ -2,7 +2,6 @@ from src.config import Config, TokensConfig
 from src.middlewares.error import Error
 from src.models.User import UserModel, UserTokens
 from src.services.OAuth import OAuthResponse
-from src.http_error import NotFoundHttpError, ServerHttpError
 
 
 class UserService:

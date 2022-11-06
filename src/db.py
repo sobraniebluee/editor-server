@@ -2,11 +2,10 @@ import sqlalchemy as db
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
-from src.config import DB
+from src.config import DBConfig
 
-DB_CONNECT = f"mysql+pymysql://{DB.user}:{DB.password}@{DB.host}/{DB.database}?charset=utf8"
 
-engine = create_engine(DB_CONNECT)
+engine = create_engine(DBConfig.DB_URL_CONNECT)
 session_factory = sessionmaker(engine, autoflush=False)
 session = scoped_session(session_factory)
 Base = declarative_base()

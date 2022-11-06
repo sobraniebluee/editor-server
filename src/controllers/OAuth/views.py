@@ -14,10 +14,10 @@ oauth = Blueprint('oauth', __name__)
 def github_redirect(identify: UserIdentify):
     print(identify)
     if identify:
-        redirect_url = f"{OAuthGithubConfig.HOST}/api/oauth/github/authenticated?id={identify.id_user}"
+        redirect_url = f"{OAuthGithubConfig.SERVER_HOST}/api/oauth/github/authenticated?id={identify.id_user}"
         return redirect(f"https://github.com/login/oauth/authorize?client_id={OAuthGithubConfig.client_id}&redirect_uri={redirect_url}")
     else:
-        return redirect(OAuthGithubConfig.REDIRECT_HOST)
+        return redirect(OAuthGithubConfig.REDIRECT_HOST_CLIENT)
 
 
 @oauth.route('/github/authenticated', methods=['GET'])
@@ -28,13 +28,13 @@ def github_authenticated(**kwargs):
         code = kwargs.get('code', None)
         id_user = kwargs.get('id', None)
         if not id_user or not code:
-            return redirect(OAuthGithubConfig.REDIRECT_HOST), 401
+            return redirect(OAuthGithubConfig.REDIRECT_HOST_CLIENT), 401
         oauth_data = OAuthGitHub.auth(code)
         user = UserService.save_forever(oauth_data=oauth_data, id_user=id_user)
         if not user:
             return "", 401
-        response = make_response(redirect(OAuthGithubConfig.REDIRECT_HOST))
-        response.set_cookie('token', "Bearer " + user.tokens.access_token, domain=OAuthGithubConfig.COOKIE_DEV_DOMAIN)
+        response = make_response(redirect(OAuthGithubConfig.REDIRECT_HOST_CLIENT))
+        response.set_cookie('token', "Bearer " + user.tokens.access_token, domain=OAuthGithubConfig.COOKIE_DOMAIN)
         return response
     except Exception as e:
         print("Error: ", e)

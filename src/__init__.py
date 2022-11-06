@@ -1,24 +1,30 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from src.config import ProdFlaskConfig, DevFlaskConfig, Config
+from src.config import FlaskConfig, Config
 from src.db import create_metadata
 from src.db import session
-from src.http_error import BaseHttpError, NotFoundHttpError
+from src.http_error import ApiBaseHttpError, NotFoundHttpError, ApiHttpError
+from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
-app.config.from_object(DevFlaskConfig)
+app.config.from_object(FlaskConfig)
 cors = CORS(app, resources={"*": {"origins": "*"}}, supports_credentials=True)
 
 
 def create_app():
-    @app.errorhandler(BaseHttpError)
-    def api_error(error: BaseHttpError):
+
+    @app.errorhandler(ApiBaseHttpError)
+    def api_error(error: ApiBaseHttpError):
+        return error.to_dict(), error.status_code
+
+    @app.errorhandler(HTTPException)
+    def http_errors(error: HTTPException):
+        error = ApiHttpError(error.description, error.code)
         return error.to_dict(), error.status_code
 
     @app.errorhandler(422)
     def error_422(error):
         messages = error.data.get('messages', 'Invalid request')
-
         if 'json' in messages:
             messages = messages['json']
         return jsonify({'message': messages}), 422

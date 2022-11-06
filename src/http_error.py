@@ -1,9 +1,9 @@
-class BaseHttpError(Exception):
+class ApiBaseHttpError(Exception):
     status_code: int
     message: str
 
     def __init__(self):
-        super(BaseHttpError, self).__init__(self.message, self.status_code)
+        super(ApiBaseHttpError, self).__init__(self.message, self.status_code)
 
     def to_dict(self):
         response = dict()
@@ -11,7 +11,7 @@ class BaseHttpError(Exception):
         return response
 
 
-class ApiHttpError(BaseHttpError):
+class ApiHttpError(ApiBaseHttpError):
     status_code: int
     message: str
 
@@ -20,12 +20,12 @@ class ApiHttpError(BaseHttpError):
         self.status_code = status_code
 
 
-class NotFoundHttpError(BaseHttpError):
+class NotFoundHttpError(ApiBaseHttpError):
     status_code = 404
     message = "Not found"
 
 
-class ServerHttpError(BaseHttpError):
+class ServerHttpError(ApiBaseHttpError):
     status_code = 500
     message = "Server error"
 

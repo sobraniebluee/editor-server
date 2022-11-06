@@ -2,50 +2,38 @@ import datetime
 from os import environ, path
 from dotenv import load_dotenv
 
-
 if not load_dotenv(path.join(path.abspath(path.curdir), '.env')):
     exit("Error load environ!")
 
 
 class FlaskConfig:
-    SECRET = "83776601-7d7f-43f5-8ec9-bc3335fc9d2b"
-    SERVER_NAME = '127.0.0.1:5001'
-    PREFERRED_URL_SCHEME = 'http'
-
-
-class DevFlaskConfig(FlaskConfig):
-    DEBUG = True
-    ENV = 'development'
     TESTING = True
-
-
-class ProdFlaskConfig(FlaskConfig):
-    DEBUG = False
-    ENV = 'production'
-    TESTING = True
+    SECRET_KEY = "aecdc6b4-848a-4d79-89c4-e7eabd5ed62a"
+    SERVER_NAME = environ.get("SERVER_NAME")
+    PREFERRED_URL_SCHEME = "http"
+    ENV = environ.get("ENV")
 
 
 class Config:
-    AVAILABLE_EXT = ['ts', 'js', 'txt', 'py', 'php']
-    STORAGE_PATH = './storage'
-    GUEST_TYPE = 'guest'
-    USER_TYPE = 'user'
-    URL_PREFIX = '/api'
+    AVAILABLE_EXT = ["ts", "js", "txt", "py", "php"]
+    STORAGE_PATH = "./storage"
+    GUEST_TYPE = "guest"
+    USER_TYPE = "user"
+    URL_PREFIX = "/api"
 
 
 class OAuthGithubConfig:
     client_id = "3aafd148f366138a37e2"
     client_secret = "5a60de84c9e6480be7128bcafebb9bbc263cd1c1"
     SERVER_HOST = f"{FlaskConfig.PREFERRED_URL_SCHEME}://{FlaskConfig.SERVER_NAME}"
-    REDIRECT_HOST_CLIENT = "http://127.0.0.1:3000"
-    # change for real domain
-    COOKIE_DOMAIN = environ.get('COOKIE_DEV_DOMAIN')
+    HOST_CLIENT = environ.get("HOST_CLIENT")
+    COOKIE_HOST_CLIENT = environ.get("COOKIE_HOST_CLIENT")
 
 
 class TokensConfig:
     EXPIRE_FOREVER_TOKEN: datetime = datetime.timedelta(days=30)
     EXPIRE_TEMPORARY_TOKEN: datetime = datetime.timedelta(hours=24)
-    SECRET_JWT = "83776601-7d7f-43f5-8ec9-bc3335fc9d2b"
+    SECRET_JWT = "b4a5d3e7-c794-439f-ac83-5e1c55b0be4b"
     PARSE_TOKEN = "cookies"
 
 

@@ -1,5 +1,5 @@
 from flask import Request
-from src.config import FlaskConfig, TokensConfig
+from src.config import TokensConfig
 import jwt
 import time
 from src.models.User import UserTokens
@@ -72,7 +72,7 @@ class CheckJWT:
 
     def decode_token(self):
         try:
-            token_decode = jwt.decode(self.token, FlaskConfig.SECRET, algorithms=["HS256"])
+            token_decode = jwt.decode(self.token, TokensConfig.SECRET_JWT, algorithms=["HS256"])
         except jwt.exceptions.DecodeError as e:
             raise DecodeJWTError
         if token_decode['exp'] > int(time.time() * 1000):

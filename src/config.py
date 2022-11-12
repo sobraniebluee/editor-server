@@ -16,7 +16,7 @@ class FlaskConfig:
 
 class Config:
     AVAILABLE_EXT = ["ts", "js", "txt", "py", "php"]
-    STORAGE_PATH = "/tmp/files"
+    STORAGE_PATH = environ.get('STORAGE_PATH')
     GUEST_TYPE = "guest"
     USER_TYPE = "user"
     URL_PREFIX = "/api"
@@ -55,3 +55,5 @@ class CompilerConfig:
     NODE_VERSION = 'node@v18.12.1'
     PYTHON_CMD = 'python3'
     PYTHON_VERSION = 'python@3.10.2'
+    PHP_CMD = 'php'
+    PHP_VERSION = 'php@8.1.10'

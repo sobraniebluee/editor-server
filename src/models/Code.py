@@ -1,11 +1,11 @@
 from src.models.mixins import Timestamp
 from src.utils import get_random_char_id
-from src.services.FileCode import FileCodeService, FileCodeError
+from src.services.files.FileCode import FileCodeService, FileCodeError
 from sqlalchemy.orm import relationship
 from src.http_error import NotFoundHttpError, ServerHttpError
 
 from src.db import Base, db, session
-from src.config import Config
+from src.config import Config, CompilerConfig
 
 
 class CodeSettingsModel(Base):
@@ -56,6 +56,10 @@ class CodeModel(Base, Timestamp):
         self.ext = ext
         self.id_user = id_user
         self.filepath = f"{Config.STORAGE_PATH}/{id_code}.{ext}"
+
+    @property
+    def is_executable(self):
+        return self.ext in CompilerConfig.AVAILABLE_COMPILES
 
     @property
     def value(self):

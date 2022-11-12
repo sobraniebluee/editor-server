@@ -3,7 +3,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from src.http_error import NotFoundHttpError, ServerHttpError
 from src.models.Code import CodeModel, CodeSettingsModel
-from src.services.FileCode import FileCodeService, FileCodeError
+from src.services.files.FileCode import FileCodeService, FileCodeError
 from src.types import SettingsT
 
 

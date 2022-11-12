@@ -28,7 +28,8 @@ class CodeResponse(Schema):
     is_owner = fields.String(dump_only=True)
     settings = fields.Nested(CodeSettingsResponse(many=False))
     message = fields.String(dump_only=True)
+    is_executable = fields.Boolean(dump_only=True)
 
 
 def LightCodeResponse(many=False):
-    return CodeResponse(only=("id", "title", "ext", "created_at", "updated_at"), many=many)
+    return CodeResponse(only=("id", "title", "ext", "created_at", "updated_at", "is_executable"), many=many)

@@ -4,6 +4,8 @@ mysql.server start
 
 sleep .5
 
+mkdir /tmp/files
+
 flask --app main --debug run
 
 

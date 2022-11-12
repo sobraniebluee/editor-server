@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 from src.http_error import NotFoundHttpError, ServerHttpError
 
 from src.db import Base, db, session
+from src.config import Config
 
 
 class CodeSettingsModel(Base):
@@ -43,7 +44,7 @@ class CodeModel(Base, Timestamp):
 
     id = db.Column(db.VARCHAR(20), primary_key=True, nullable=False)
     id_user = db.Column(db.VARCHAR(18), db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
-    filepath = db.Column(db.VARCHAR(32), nullable=False)
+    filepath = db.Column(db.VARCHAR(256), nullable=False)
     title = db.Column(db.VARCHAR(32), nullable=False)
     ext = db.Column(db.CHAR(6), nullable=False)
     settings = relationship('CodeSettingsModel', backref='codes', uselist=False, passive_deletes=True)
@@ -54,6 +55,7 @@ class CodeModel(Base, Timestamp):
         self.title = title
         self.ext = ext
         self.id_user = id_user
+        self.filepath = f"{Config.STORAGE_PATH}/{id_code}.{ext}"
 
     @property
     def value(self):
@@ -66,9 +68,10 @@ class CodeModel(Base, Timestamp):
         try:
             session.add(self)
             session.commit()
-        except Exception:
+        except Exception as e:
+            print(e)
             session.rollback()
-            raise ServerHttpError
+            raise
 
     @classmethod
     def commit(cls):

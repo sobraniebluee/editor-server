@@ -14,20 +14,18 @@ class CodeService:
 
     @classmethod
     def create(cls, id_user, title, ext, value):
-        new_filepath = None
+        new_code = CodeModel(title=title, ext=ext, id_user=id_user)
+        new_code_settings = CodeSettingsModel(new_code.id)
         try:
-            new_record = CodeModel(title=title, ext=ext, id_user=id_user)
-            new_settings = CodeSettingsModel(new_record.id)
-            new_filepath = FileCodeService.create(new_record.id, new_record.ext, value)
-            setattr(new_record, 'filepath', new_filepath)
-            new_record.save()
-            new_settings.save()
-            return new_record, 200
+            FileCodeService.create(new_code.filepath, value=value)
+            new_code.save()
+            new_code_settings.save()
+            return new_code, 200
         except SQLAlchemyError as e:
             print(e)
-            if new_filepath:
-                FileCodeService.delete(new_filepath)
-            raise NotFoundHttpError
+            if new_code.filepath:
+                FileCodeService.delete(new_code.filepath)
+            raise ServerHttpError
         except FileCodeError as e:
             print(e)
             raise ServerHttpError

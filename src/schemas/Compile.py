@@ -8,3 +8,4 @@ class CompileRequest(Schema):
 class OutputCompileResponse(Schema):
     value = fields.String(dump_only=True)
     is_error = fields.Boolean(dump_only=True)
+    version_compiler = fields.String(dump_only=True)

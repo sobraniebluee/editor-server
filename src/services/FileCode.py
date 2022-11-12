@@ -10,13 +10,12 @@ class FileCodeError(BaseException):
 
 class FileCodeService:
     @classmethod
-    def create(cls, filename, ext, data):
-        filepath = f"{Config.STORAGE_PATH}/{filename}.{ext}"
+    def create(cls, filepath, value):
         if os.path.exists(filepath):
-            raise FileCodeError("File doesn't exist")
+            raise FileCodeError("Filepath doesn't exist")
         try:
             with open(filepath, "w+") as f:
-                f.write(data)
+                f.write(value)
                 f.close()
             return filepath
         except Exception as e:
@@ -60,4 +59,11 @@ class FileCodeService:
             os.unlink(filepath)
         except Exception as e:
             raise FileCodeError(e)
+
+    @classmethod
+    def is_exist(cls, filepath):
+        if not os.path.exists(filepath):
+            return False
+        else:
+            return True
 

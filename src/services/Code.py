@@ -32,22 +32,19 @@ class CodeService:
 
     @classmethod
     def get(cls, id_user, id_code):
-        record = CodeModel.query.filter(CodeModel.id == id_code, CodeModel.id_user == id_user).first()
-        if not record:
-            raise NotFoundHttpError
+        record = CodeModel.get(id_code=id_code, id_user=id_user)
         return record, 200
 
     @classmethod
     def delete(cls, id_user, id_code):
-        record = CodeModel.query.filter(CodeModel.id == id_code, CodeModel.id_user == id_user).first()
-        if not record:
-            raise NotFoundHttpError
+        record = CodeModel.get(id_code=id_code, id_user=id_user)
         try:
             FileCodeService.delete(record.filepath)
             record.delete()
         except SQLAlchemyError as e:
+            FileCodeService.delete(record.filepath)
             print("Error delete code", e)
-            raise ServerHttpError
+            raise NotFoundHttpError
         except FileCodeError as e:
             record.delete()
             raise NotFoundHttpError
@@ -55,7 +52,7 @@ class CodeService:
 
     @classmethod
     def set_value(cls, id_user, id_code, value):
-        record = CodeModel.query.filter(CodeModel.id == id_code, CodeModel.id_user == id_user).first()
+        record = CodeModel.get(id_code=id_code, id_user=id_user)
         if not record:
             raise NotFoundHttpError
         try:
@@ -67,9 +64,7 @@ class CodeService:
 
     @classmethod
     def set_title(cls, id_user, id_code, title, ext):
-        record = CodeModel.query.filter(CodeModel.id == id_code, CodeModel.id_user == id_user).first()
-        if not record:
-            raise NotFoundHttpError
+        record = CodeModel.get(id_code=id_code, id_user=id_user)
         try:
             new_filepath = FileCodeService.rename(record.filepath, id_code, ext)
         except FileCodeError:
@@ -84,9 +79,7 @@ class CodeService:
 
     @classmethod
     def set_settings(cls, id_user, id_code, **kwargs: SettingsT):
-        code = CodeModel.query.filter(CodeModel.id == id_code, CodeModel.id_user == id_user).first()
-        if not code:
-            raise NotFoundHttpError
+        code = CodeModel.get(id_code=id_code, id_user=id_user)
         settings = CodeSettingsModel.query.filter(CodeSettingsModel.id_code == id_code).first()
         if not settings:
             raise NotFoundHttpError

@@ -68,6 +68,16 @@ class CodeModel(Base, Timestamp):
         except FileCodeError:
             raise NotFoundHttpError
 
+    @staticmethod
+    def get(id_code, id_user):
+        code = CodeModel.query.filter(CodeModel.id == id_code, CodeModel.id_user == id_user).first()
+        if not code:
+            raise NotFoundHttpError
+        if not FileCodeService.is_exist(code.filepath):
+            code.delete()
+            raise NotFoundHttpError
+        return code
+
     def save(self):
         try:
             session.add(self)
@@ -81,7 +91,8 @@ class CodeModel(Base, Timestamp):
     def commit(cls):
         try:
             session.commit()
-        except Exception:
+        except Exception as e:
+            print(e)
             session.rollback()
             raise ServerHttpError
 
@@ -90,6 +101,7 @@ class CodeModel(Base, Timestamp):
             session.delete(self)
             session.commit()
         except Exception as e:
+            print(e)
             session.rollback()
             raise ServerHttpError
 

@@ -16,13 +16,13 @@ def connect():
 
 @socketio.on('disconnect')
 def disconnect():
+    print('disconnect')
     sid = request.sid
     user, room = RoomsService.get_user(sid)
     if user and room:
         room.leave(sid_user=sid)
         leave_room(sid)
-        schema = UserRoomSchema(many=True)
-        socketio.emit("LEAVE_CODE:MESSAGE", schema.dump(room.users), broadcast=True, to=room.id_room)
+        socketio.emit("LEAVE_CODE:MESSAGE", room.get_users(), broadcast=True, to=room.id_room)
 
 
 @socketio.on('JOIN_CODE')
@@ -37,7 +37,7 @@ def join(data: dict, identify: UserIdentify):
         return
 
     room = RoomsService.get(room_id)
-
+    print("Room", room)
     if not room:
         if not is_owner:
             print("error owner")
@@ -47,8 +47,8 @@ def join(data: dict, identify: UserIdentify):
         room.join(id_user=identify.id_user, sid_user=sid, is_owner=is_owner)
 
     join_room(room=room_id, sid=sid)
-    schema = UserRoomSchema(many=True)
-    socketio.emit('JOIN_CODE:MESSAGE', schema.dump(room.users), broadcast=True, to=room_id)
+    print("Users:", room.users)
+    socketio.emit('JOIN_CODE:MESSAGE', room.get_users(), broadcast=True, to=room_id)
 
 
 @socketio.on('LEAVE_CODE')
@@ -68,8 +68,27 @@ def leave(data: dict, identify: UserIdentify):
 
     room.leave(sid)
     leave_room(room_id, sid)
-    schema = UserRoomSchema(many=True)
-    socketio.emit("LEAVE_CODE:MESSAGE", schema.dump(room.users), broadcast=True, to=room_id)
+
+    socketio.emit("LEAVE_CODE:MESSAGE", room.get_users(), broadcast=True, to=room_id)
+
+
+@socketio.on('DESTROY_CODE')
+@auth_required(request=request)
+def destroy(data, identify: UserIdentify):
+    # sid = data.get('sid', request.sid)
+    room_id = data.get('room', None)
+    is_owner = data.get('is_owner', None)
+
+    if room_id is None or is_owner is None:
+        print('Error destroy: DATA')
+        return
+    if not is_owner:
+        print('Error destroy: OWNER')
+        return
+
+    RoomsService.remove(room_id)
+    socketio.emit("DESTROY_CODE:MESSAGE", {'status_code': 200}, include_self=False, broadcast=True, to=room_id)
+    socketio.close_room(room_id)
 
 
 @socketio.on('SET_VALUE')
@@ -81,6 +100,11 @@ def set_value(data, identify: UserIdentify):
     if value and user and room:
         # emit("SET_VALUE:MESSAGE", {"value": value},include_self=False, broadcast=True, to=room.id_room)
         send({"value": value}, include_self=False, broadcast=True, to=room.id_room)
+
+
+@socketio.on('DESTROY_CODE:MESSAGE')
+def destroy_msg(data):
+    socketio.send(data)
 
 
 @socketio.on('JOIN_CODE:MESSAGE')
@@ -102,7 +126,6 @@ def set_value_msg(data):
 def error_msg(data):
     socketio.send(data)
 
-# @socketio.on('DESTROY_ROOM')
 
 
 

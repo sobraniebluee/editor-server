@@ -72,9 +72,9 @@ class CodeModel(Base, Timestamp):
     @staticmethod
     def get(id_code, id_user):
         code = CodeModel.query.filter(CodeModel.id == id_code).first()
-        if not code.settings.live_mode and code.id_user != id_user:
-            raise NotFoundHttpError
         if not code:
+            raise NotFoundHttpError
+        if not code.settings.live_mode and code.id_user != id_user:
             raise NotFoundHttpError
         if not FileCodeService.is_exist(code.filepath):
             code.delete()

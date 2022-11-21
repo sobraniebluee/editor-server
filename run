@@ -6,7 +6,8 @@ sleep .5
 
 mkdir /tmp/files
 
-flask --app main --debug run
+#flask --app main:app --debug run
+python main.py
 
 
 

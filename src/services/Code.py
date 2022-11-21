@@ -1,7 +1,7 @@
 from sqlalchemy import desc
 from sqlalchemy.exc import SQLAlchemyError
 
-from src.http_error import NotFoundHttpError, ServerHttpError
+from src.http_error import NotFoundHttpError, ServerHttpError, PermissionDenied
 from src.models.Code import CodeModel, CodeSettingsModel
 from src.services.files.FileCode import FileCodeService, FileCodeError
 from src.types import SettingsT
@@ -37,7 +37,9 @@ class CodeService:
 
     @classmethod
     def delete(cls, id_user, id_code):
-        record = CodeModel.get(id_code=id_code, id_user=id_user)
+        record: CodeModel = CodeModel.get(id_code=id_code, id_user=id_user)
+        if not record.is_owner:
+            raise PermissionDenied
         try:
             FileCodeService.delete(record.filepath)
             record.delete()
@@ -52,7 +54,9 @@ class CodeService:
 
     @classmethod
     def set_value(cls, id_user, id_code, value):
-        record = CodeModel.get(id_code=id_code, id_user=id_user)
+        record: CodeModel = CodeModel.get(id_code=id_code, id_user=id_user)
+        if record.settings.read_only and not record.is_owner:
+            raise PermissionDenied
         if not record:
             raise NotFoundHttpError
         try:
@@ -64,7 +68,9 @@ class CodeService:
 
     @classmethod
     def set_title(cls, id_user, id_code, title, ext):
-        record = CodeModel.get(id_code=id_code, id_user=id_user)
+        record: CodeModel = CodeModel.get(id_code=id_code, id_user=id_user)
+        if record.settings.read_only and not record.is_owner:
+            raise PermissionDenied
         try:
             new_filepath = FileCodeService.rename(record.filepath, id_code, ext)
         except FileCodeError:
@@ -79,7 +85,9 @@ class CodeService:
 
     @classmethod
     def set_settings(cls, id_user, id_code, **kwargs: SettingsT):
-        code = CodeModel.get(id_code=id_code, id_user=id_user)
+        record: CodeModel = CodeModel.get(id_code=id_code, id_user=id_user)
+        if not record.is_owner:
+            raise PermissionDenied
         settings = CodeSettingsModel.query.filter(CodeSettingsModel.id_code == id_code).first()
         if not settings:
             raise NotFoundHttpError

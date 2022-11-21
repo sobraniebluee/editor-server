@@ -20,6 +20,7 @@ class UserTokens(Base):
     def create_access_token(self, payload, exp):
         payload["exp"] = datetime.datetime.now(tz=datetime.timezone.utc) + exp
         self.access_token = jwt.encode(payload=payload, key=TokensConfig.SECRET_JWT, algorithm="HS256")
+        self.commit()
 
     def save(self):
         try:

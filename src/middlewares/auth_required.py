@@ -97,7 +97,7 @@ def auth_required(request: Request, optional=False):
                 else:
                     identify = None
 
-            return func(identify=identify, *args, **kwargs)
+            return func(*args, **kwargs, identify=identify)
         decorate_params.__name__ = func.__name__
         return decorate_params
     return decorate_function

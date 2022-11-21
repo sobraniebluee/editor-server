@@ -14,7 +14,7 @@ class CodeSettingsModel(Base):
     id_code = db.Column(db.VARCHAR(32), db.ForeignKey('codes.id', ondelete="CASCADE", onupdate="CASCADE"), primary_key=True)
     live_mode = db.Column(db.Boolean(), nullable=False, default=False)
     password = db.Column(db.VARCHAR(64), nullable=True, default=None)
-    read_only = db.Column(db.Boolean(), nullable=False, default=False)
+    read_only = db.Column(db.Boolean(), nullable=False, default=True)
 
     def __init__(self, id_code):
         self.id_code = id_code
@@ -47,7 +47,8 @@ class CodeModel(Base, Timestamp):
     filepath = db.Column(db.VARCHAR(256), nullable=False)
     title = db.Column(db.VARCHAR(32), nullable=False)
     ext = db.Column(db.CHAR(6), nullable=False)
-    settings = relationship('CodeSettingsModel', backref='codes', uselist=False, passive_deletes=True)
+    settings = relationship('CodeSettingsModel', backref='codes', uselist=False, passive_deletes=True, cascade="all, delete")
+    is_owner: str
 
     def __init__(self, id_user, title, ext):
         id_code = get_random_char_id()
@@ -70,12 +71,15 @@ class CodeModel(Base, Timestamp):
 
     @staticmethod
     def get(id_code, id_user):
-        code = CodeModel.query.filter(CodeModel.id == id_code, CodeModel.id_user == id_user).first()
+        code = CodeModel.query.filter(CodeModel.id == id_code).first()
+        if not code.settings.live_mode and code.id_user != id_user:
+            raise NotFoundHttpError
         if not code:
             raise NotFoundHttpError
         if not FileCodeService.is_exist(code.filepath):
             code.delete()
             raise NotFoundHttpError
+        CodeModel.is_owner = True if code.id_user == id_user else False
         return code
 
     def save(self):
@@ -94,7 +98,7 @@ class CodeModel(Base, Timestamp):
         except Exception as e:
             print(e)
             session.rollback()
-            raise ServerHttpError
+            raise
 
     def delete(self):
         try:
@@ -103,7 +107,7 @@ class CodeModel(Base, Timestamp):
         except Exception as e:
             print(e)
             session.rollback()
-            raise ServerHttpError
+            raise
 
     def __repr__(self):
         return f"<Code id='{self.id}' title='{self.title}' ext='{self.ext}'>"

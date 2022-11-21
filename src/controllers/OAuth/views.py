@@ -29,6 +29,7 @@ def github_authenticated(**kwargs):
         id_user = kwargs.get('id', None)
         if not id_user or not code:
             return redirect(OAuthGithubConfig.HOST_CLIENT), 401
+
         oauth_data = OAuthGitHub.auth(code)
         user = UserService.save_forever(oauth_data=oauth_data, id_user=id_user)
         if not user:

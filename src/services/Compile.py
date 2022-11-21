@@ -142,7 +142,7 @@ class Compiler:
         process = CmdProcess.run(command=[CompilerConfig.PHP_CMD, filepath])
 
         relative_filepath = os.path.relpath(filepath)
-        abs_filepath = os.path.abspath(filepath)
+        abs_filepath = "/private" + os.path.abspath(filepath)
 
         if process.error:
             return OutputCompiler(value=process.error.replace(relative_filepath, filename).replace(abs_filepath, filename),

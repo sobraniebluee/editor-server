@@ -29,3 +29,8 @@ class ServerHttpError(ApiBaseHttpError):
     status_code = 500
     message = "Server error"
 
+
+class PermissionDenied(ApiBaseHttpError):
+    status_code = 403
+    message = "Forbidden"
+

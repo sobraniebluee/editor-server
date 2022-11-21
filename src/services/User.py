@@ -31,13 +31,15 @@ class UserService:
         user.update(username=oauth_data.login,
                     oauth_id=oauth_data.id,
                     avatar=oauth_data.avatar)
+
         token = UserTokens.query.filter(UserTokens.id_user == user.id).first()
+
         token.create_access_token(payload={
             'github_token': oauth_data.access_token,
             'type': Config.USER_TYPE,
             'id': user.id
         }, exp=TokensConfig.EXPIRE_FOREVER_TOKEN)
-        token.commit()
+
         return user
 
     @classmethod

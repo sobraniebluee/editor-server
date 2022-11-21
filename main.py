@@ -1,6 +1,4 @@
-from src import create_app
-from os import environ
-
+from src import create_app, app
 if __name__ == "__main__":
-    app = create_app()
-    app.run()
+    socketio = create_app()
+    socketio.run(app=app, debug=True, port=5000)

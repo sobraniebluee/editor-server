@@ -25,7 +25,7 @@ class CodeResponse(Schema):
     value = fields.String(dump_only=True)
     created_at = fields.String(dump_only=True)
     updated_at = fields.String(dump_only=True)
-    is_owner = fields.String(dump_only=True)
+    is_owner = fields.Boolean(dump_only=True)
     settings = fields.Nested(CodeSettingsResponse(many=False))
     message = fields.String(dump_only=True)
     is_executable = fields.Boolean(dump_only=True)

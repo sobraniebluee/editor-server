@@ -98,8 +98,31 @@ def set_value(data, identify: UserIdentify):
 
     user, room = RoomsService.get_user(id_user=identify.id_user)
     if value and user and room:
-        # emit("SET_VALUE:MESSAGE", {"value": value},include_self=False, broadcast=True, to=room.id_room)
-        send({"value": value}, include_self=False, broadcast=True, to=room.id_room)
+        socketio.emit("SET_VALUE:MESSAGE", {"value": value, "id_user": user.id_user, "sid_user": user.sid_user}, include_self=False, broadcast=True, to=room.id_room)
+
+
+@socketio.on("SET_SETTINGS")
+@auth_required(request=request)
+def set_settings(data, identify: UserIdentify):
+    user, room = RoomsService.get_user(id_user=identify.id_user)
+    if user and room:
+        socketio.emit("SET_SETTINGS:MESSAGE", {**data, "sid_user": user.sid_user}, include_self=False, broadcast=True, to=room.id_room)
+
+
+@socketio.on("SET_TITLE")
+@auth_required(request=request)
+def set_title(data, identify: UserIdentify):
+    user, room = RoomsService.get_user(id_user=identify.id_user)
+    if user and room:
+        socketio.emit("SET_TITLE:MESSAGE", {**data, "sid_user": user.sid_user}, include_self=False, broadcast=True, to=room.id_room)
+
+
+@socketio.on("OUTPUT_COMPILE")
+@auth_required(request=request)
+def output_console(data, identify: UserIdentify):
+    user, room = RoomsService.get_user(id_user=identify.id_user)
+    if user and room:
+        socketio.emit("OUTPUT_COMPILE:MESSAGE", {**data, "sid_user": user.sid_user}, include_self=False, broadcast=True, to=room.id_room)
 
 
 @socketio.on('DESTROY_CODE:MESSAGE')
@@ -118,6 +141,21 @@ def leave_msg(data):
 
 
 @socketio.on('SET_VALUE:MESSAGE')
+def set_value_msg(data):
+    socketio.send(data)
+
+
+@socketio.on('SET_SETTINGS:MESSAGE')
+def set_value_msg(data):
+    socketio.send(data)
+
+
+@socketio.on('SET_TITLE:MESSAGE')
+def set_value_msg(data):
+    socketio.send(data)
+
+
+@socketio.on('OUTPUT_COMPILE:MESSAGE')
 def set_value_msg(data):
     socketio.send(data)
 

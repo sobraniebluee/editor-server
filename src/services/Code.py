@@ -95,9 +95,9 @@ class CodeService:
             if key != "password":
                 setattr(settings, key, kwargs[key])
 
-        password = kwargs["password"]
-        if password:
-            setattr(settings, "password", password)
+        password = kwargs.get("password", None)
+        setattr(settings, "password", password)
+
         try:
             settings.commit()
             return "", 204

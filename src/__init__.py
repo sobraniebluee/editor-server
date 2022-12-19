@@ -9,7 +9,7 @@ from flask_socketio import SocketIO
 
 app = Flask(__name__)
 app.config.from_object(FlaskConfig)
-cors = CORS(app, resources={"*": {"origins": "*"}}, supports_credentials=True)
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
 socketio = SocketIO(app=app,
                     async_mode="eventlet",

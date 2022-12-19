@@ -4,7 +4,7 @@ from src.middlewares.auth_required import auth_required
 from src.schemas.User import UserResponse
 from src.services.User import UserService
 from src.middlewares.auth_required import UserIdentify
-
+from src.config import OAuthGithubConfig
 user = Blueprint('user', __name__)
 
 
@@ -17,7 +17,13 @@ def auth(identify: UserIdentify):
         if status_code != 200:
             return jsonify(data), status_code
         response = make_response(schema.dump(data), status_code)
-        response.set_cookie('token', 'Bearer ' + data.tokens.access_token)
+        response.headers['Access-Control-Allow-Headers'] = 'Set-Cookie'
+        response.set_cookie(key='token',
+                            value='Bearer ' + data.tokens.access_token,
+                            domain=OAuthGithubConfig.COOKIE_HOST_CLIENT,
+                            # samesite='None',
+                            # secure=True
+                            )
         return response
     else:
         data, status_code = UserService.get_one(identify.id_user)

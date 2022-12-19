@@ -5,6 +5,7 @@ class CodeSettingsResponse(Schema):
     live_mode = fields.Boolean(dump_only=True)
     read_only = fields.Boolean(dump_only=True)
     password = fields.String(dump_only=True)
+    is_password = fields.Boolean(dump_only=True)
 
 
 class UpdateCodeSettingsRequest(Schema):

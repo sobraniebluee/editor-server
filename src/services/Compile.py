@@ -13,7 +13,7 @@ class CompileService:
         code: CodeModel = CodeModel.query.filter(CodeModel.id == id_file).first()
         if not code:
             raise NotFoundHttpError
-        if code.id_user != id_user:
+        if code.settings.live_mode is False and code.id_user != id_user:
             raise ApiHttpError(message="You have not permissions to run this code!", status_code=403)
         if code.ext not in CompilerConfig.AVAILABLE_COMPILES:
             raise ServerHttpError
@@ -66,7 +66,7 @@ class CmdProcess:
             process.kill()
             output, error = process.communicate()
 
-        return OutputCmdProcess(output=output,error=error)
+        return OutputCmdProcess(output=output, error=error)
 
 
 class OutputCompiler:
@@ -87,9 +87,10 @@ class Compiler:
         process = CmdProcess.run(command=[CompilerConfig.NODE_CMD, "--no-warnings", "--stack-trace-limit=1", filepath])
 
         if process.error:
-            return OutputCompiler(value=process.error.replace(abs_filepath, filename).replace(relative_filepath, filename),
-                                  is_error=True,
-                                  version_compiler=CompilerConfig.NODE_VERSION)
+            return OutputCompiler(
+                value=process.error.replace(abs_filepath, filename).replace(relative_filepath, filename),
+                is_error=True,
+                version_compiler=CompilerConfig.NODE_VERSION)
         else:
             return OutputCompiler(value=process.output,
                                   is_error=False,
@@ -101,15 +102,18 @@ class Compiler:
         abs_filepath = os.path.abspath(filepath)
         output_js_filepath = f"{Config.STORAGE_PATH}/{id_code}.js"
 
-        process = CmdProcess.run(command=[CompilerConfig.TYPESCRIPT_CMD, "--module", "none", "--pretty", "false", "--strict", "--noEmitOnError", "--outFile", output_js_filepath, filepath])
+        process = CmdProcess.run(
+            command=[CompilerConfig.TYPESCRIPT_CMD, "--module", "none", "--pretty", "false", "--strict",
+                     "--noEmitOnError", "--outFile", output_js_filepath, filepath])
 
         # If output approach it is mean typescript generate error,
         # Check each line for filepath and replace to filename
 
         if process.output != "" and not os.path.exists(output_js_filepath):
-            return OutputCompiler(value=process.output.replace(relative_filepath, filename).replace(abs_filepath, filename),
-                                  is_error=True,
-                                  version_compiler=CompilerConfig.TYPESCRIPT_VERSION)
+            return OutputCompiler(
+                value=process.output.replace(relative_filepath, filename).replace(abs_filepath, filename),
+                is_error=True,
+                version_compiler=CompilerConfig.TYPESCRIPT_VERSION)
         else:
             output_compile_js = cls.javascript(output_js_filepath, filename=filename)
             try:
@@ -129,9 +133,10 @@ class Compiler:
         process = CmdProcess.run(command=[CompilerConfig.PYTHON_CMD, filepath])
 
         if process.error:
-            return OutputCompiler(value=process.error.replace(relative_filepath, filename).replace(abs_filepath, filename),
-                                  is_error=True,
-                                  version_compiler=CompilerConfig.PYTHON_VERSION)
+            return OutputCompiler(
+                value=process.error.replace(relative_filepath, filename).replace(abs_filepath, filename),
+                is_error=True,
+                version_compiler=CompilerConfig.PYTHON_VERSION)
         else:
             return OutputCompiler(value=process.output,
                                   is_error=False,
@@ -145,9 +150,10 @@ class Compiler:
         abs_filepath = "/private" + os.path.abspath(filepath)
 
         if process.error:
-            return OutputCompiler(value=process.error.replace(relative_filepath, filename).replace(abs_filepath, filename),
-                                  is_error=True,
-                                  version_compiler=CompilerConfig.PHP_VERSION)
+            return OutputCompiler(
+                value=process.error.replace(relative_filepath, filename).replace(abs_filepath, filename),
+                is_error=True,
+                version_compiler=CompilerConfig.PHP_VERSION)
         else:
             return OutputCompiler(value=process.output,
                                   is_error=False,

@@ -48,7 +48,7 @@ class DBConfig:
 class CompilerConfig:
     TIME_EXPIRE = 5
     AVAILABLE_COMPILES = ['js', 'php', 'py', 'ts']
-    MAX_OUTPUT_LENGTH = 200 * 1024
+    MAX_OUTPUT_LENGTH = 5 * 1024
     TYPESCRIPT_CMD = 'tsc'
     TYPESCRIPT_VERSION = 'typescript@4.5.4'
     NODE_CMD = 'node'

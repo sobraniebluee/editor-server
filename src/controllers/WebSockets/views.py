@@ -1,9 +1,8 @@
 from flask import Blueprint, request
-from flask_socketio import join_room, leave_room, emit, send
+from flask_socketio import join_room, leave_room
 
 from src import socketio
 from src.middlewares.auth_required import auth_required, UserIdentify
-from src.schemas.Websocket import UserRoomSchema
 from src.services.websocket.RoomService import RoomsService
 
 websocket = Blueprint('websocket', __name__)
@@ -97,6 +96,7 @@ def set_value(data, identify: UserIdentify):
     value = data.get('value', None)
 
     user, room = RoomsService.get_user(id_user=identify.id_user)
+    print(value, user, room)
     if value and user and room:
         socketio.emit("SET_VALUE:MESSAGE", {"value": value, "id_user": user.id_user, "sid_user": user.sid_user}, include_self=False, broadcast=True, to=room.id_room)
 

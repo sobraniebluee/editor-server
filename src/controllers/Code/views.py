@@ -3,6 +3,7 @@ from flask_apispec import use_kwargs, marshal_with
 from src.schemas.CodeSettings import UpdateCodeSettingsRequest
 from src.schemas.Code import CreateCodeRequest, UpdateCodeRequest, CodeResponse, UpdateFileRequest, LightCodeResponse
 from src.services.Code import CodeService
+from src.schemas.CodeSettings import CodeSettingsResponse
 from src.types import SettingsT
 from src.middlewares.auth_required import auth_required, UserIdentify
 code = Blueprint('code', __name__)

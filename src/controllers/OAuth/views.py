@@ -35,7 +35,12 @@ def github_authenticated(**kwargs):
         if not user:
             return "", 401
         response = make_response(redirect(OAuthGithubConfig.HOST_CLIENT))
-        response.set_cookie('token', "Bearer " + user.tokens.access_token, domain=OAuthGithubConfig.COOKIE_HOST_CLIENT)
+        response.set_cookie(key='token',
+                            value="Bearer " + user.tokens.access_token,
+                            domain=OAuthGithubConfig.COOKIE_HOST_CLIENT,
+                            # samesite='None',
+                            # secure=True
+                            )
         return response
     except Exception as e:
         print("Error: ", e)

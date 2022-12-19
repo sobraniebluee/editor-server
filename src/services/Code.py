@@ -74,7 +74,7 @@ class CodeService:
         try:
             new_filepath = FileCodeService.rename(record.filepath, id_code, ext)
         except FileCodeError:
-            print("Error rename")
+            # print("Error rename")
             raise ServerHttpError
         if new_filepath != record.filepath:
             setattr(record, "ext", ext)

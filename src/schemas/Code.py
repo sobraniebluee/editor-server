@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, validate
+from marshmallow import Schema, fields, validate, pre_dump
 from src.config import Config
 from src.schemas.CodeSettings import CodeSettingsResponse
 
@@ -29,6 +29,16 @@ class CodeResponse(Schema):
     settings = fields.Nested(CodeSettingsResponse(many=False))
     message = fields.String(dump_only=True)
     is_executable = fields.Boolean(dump_only=True)
+
+    @pre_dump
+    def check(self, data, **kwargs):
+        # if not data.is_owner:
+        #     if data.settings.password is not None:
+        #         data.settings.is_password = True
+        #         data.settings.password = None
+        #     else:
+        #         data.settings.is_password = False
+        return data
 
 
 def LightCodeResponse(many=False):

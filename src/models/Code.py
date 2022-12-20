@@ -1,11 +1,11 @@
-from src.models.mixins import Timestamp
-from src.utils import get_random_char_id
-from src.services.files.FileCode import FileCodeService, FileCodeError
 from sqlalchemy.orm import relationship
-from src.http_error import NotFoundHttpError, ServerHttpError
 
-from src.db import Base, db, session
 from src.config import Config, CompilerConfig
+from src.db import Base, db, session
+from src.http_error import NotFoundHttpError
+from src.models.mixins import Timestamp
+from src.services.files.FileCode import FileCodeService, FileCodeError
+from src.utils import get_random_char_id
 
 
 class CodeSettingsModel(Base):
@@ -87,7 +87,6 @@ class CodeModel(Base, Timestamp):
             session.add(self)
             session.commit()
         except Exception as e:
-            print(e)
             session.rollback()
             raise
 
@@ -96,7 +95,6 @@ class CodeModel(Base, Timestamp):
         try:
             session.commit()
         except Exception as e:
-            print(e)
             session.rollback()
             raise
 
@@ -105,7 +103,6 @@ class CodeModel(Base, Timestamp):
             session.delete(self)
             session.commit()
         except Exception as e:
-            print(e)
             session.rollback()
             raise
 

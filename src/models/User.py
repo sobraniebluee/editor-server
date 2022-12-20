@@ -1,11 +1,12 @@
 import datetime
 
+import jwt
+from sqlalchemy.orm import relationship
+
+from src.config import TokensConfig, Config
 from src.db import db, Base, session
 from src.models.mixins import Timestamp
 from src.utils import get_random_char_id
-import jwt
-from src.config import TokensConfig, Config
-from sqlalchemy.orm import relationship
 
 
 class UserTokens(Base):
@@ -26,7 +27,7 @@ class UserTokens(Base):
         try:
             session.add(self)
             session.commit()
-        except Exception:
+        except Exception as e:
             session.rollback()
             raise
 
@@ -34,7 +35,7 @@ class UserTokens(Base):
     def commit(cls):
         try:
             session.commit()
-        except Exception:
+        except Exception as e:
             session.rollback()
             raise
 
@@ -42,7 +43,7 @@ class UserTokens(Base):
         try:
             session.delete(self)
             session.commit()
-        except Exception:
+        except Exception as e:
             session.rollback()
             raise
 
@@ -58,7 +59,7 @@ class UserModel(Base, Timestamp):
     ip = db.Column(db.VARCHAR(14), nullable=True)
     tokens = relationship("UserTokens",  backref="users", uselist=False, passive_deletes=True)
 
-    def __init__(self, user_type):
+    def __init__(self):
         self.id = get_random_char_id()
         self.user_type = Config.GUEST_TYPE
         self.ip = None
@@ -70,7 +71,7 @@ class UserModel(Base, Timestamp):
         try:
             session.add(self)
             session.commit()
-        except Exception:
+        except Exception as e:
             session.rollback()
             raise
 
@@ -89,14 +90,14 @@ class UserModel(Base, Timestamp):
     def commit(cls):
         try:
             session.commit()
-        except Exception:
+        except Exception as e:
             session.rollback()
             raise
 
     def delete(self):
         try:
             session.delete(self)
-        except Exception:
+        except Exception as e:
             session.rollback()
             raise
 

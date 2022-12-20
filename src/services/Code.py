@@ -22,12 +22,10 @@ class CodeService:
             new_code_settings.save()
             return new_code, 200
         except SQLAlchemyError as e:
-            print(e)
             if new_code.filepath:
                 FileCodeService.delete(new_code.filepath)
-            raise ServerHttpError
+            raise SQLAlchemyError(e)
         except FileCodeError as e:
-            print(e)
             raise ServerHttpError
 
     @classmethod

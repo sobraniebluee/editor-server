@@ -83,19 +83,3 @@ class RoomsService:
                 if user.sid_user == sid or user.id_user == id_user:
                     return user, room
         return None, None
-
-
-# r = Room(id_room=1, id_owner=1)
-# r.join(id_user=1, sid_user='dkdk', is_owner=True)
-# r.join(id_user='1', sid_user='fkfkfk', is_owner=False)
-#
-# b = Room(id_room=2, id_owner=1)
-#
-# print(b.users)
-# print(r.users)
-# # print(r.len())
-# #
-# # r.leave(sid_user='fkfkfk')
-# #
-# # print(r.users)
-# # print(r.len())

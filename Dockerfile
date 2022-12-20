@@ -1,5 +1,5 @@
 FROM python
-FROM mysql
+
 
 WORKDIR /app
 

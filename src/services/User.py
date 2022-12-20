@@ -7,7 +7,7 @@ from src.services.OAuth import OAuthResponse
 class UserService:
     @classmethod
     def save_temporary(cls):
-        temp_user = UserModel(user_type=Config.GUEST_TYPE)
+        temp_user = UserModel()
         temp_token = UserTokens(temp_user.id)
         token_payload = {
             'type': 'guest',

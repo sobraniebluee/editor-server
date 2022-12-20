@@ -20,6 +20,9 @@ class Config:
     GUEST_TYPE = "guest"
     USER_TYPE = "user"
     URL_PREFIX = "/api"
+    LOGGER_DB_FILEPATH = 'logs/database_error.log'
+    LOGGER_API_ERROR_FILEPATH = 'logs/api_error.log'
+    LOGGER_API_INFO_FILEPATH = 'logs/api_info.log'
 
 
 class OAuthGithubConfig:

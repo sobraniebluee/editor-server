@@ -96,7 +96,6 @@ def set_value(data, identify: UserIdentify):
     value = data.get('value', None)
 
     user, room = RoomsService.get_user(id_user=identify.id_user)
-    print(value, user, room)
     if value and user and room:
         socketio.emit("SET_VALUE:MESSAGE", {"value": value, "id_user": user.id_user, "sid_user": user.sid_user}, include_self=False, broadcast=True, to=room.id_room)
 

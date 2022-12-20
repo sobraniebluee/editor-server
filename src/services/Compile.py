@@ -106,7 +106,7 @@ class Compiler:
             command=[CompilerConfig.TYPESCRIPT_CMD, "--module", "none", "--pretty", "false", "--strict",
                      "--noEmitOnError", "--outFile", output_js_filepath, filepath])
 
-        # If output approach it is mean typescript generate error,
+        # If output appears it is mean typescript generate error,
         # Check each line for filepath and replace to filename
 
         if process.output != "" and not os.path.exists(output_js_filepath):
@@ -119,7 +119,7 @@ class Compiler:
             try:
                 os.unlink(output_js_filepath)
             except OSError:
-                raise BaseCompilerError("TS: Error delete output js file")
+                raise BaseCompilerError("TS: Deletion error output js file")
 
             return OutputCompiler(value=output_compile_js.value,
                                   is_error=output_compile_js.is_error,
